@@ -14,7 +14,7 @@
   --ink:#10303f; --ink-soft:#3d5a68; --ink-faint:#6b8794;
   --paper:#f3f7f9; --card:#ffffff; --line:#dce7ec; --line-strong:#b9cdd6;
   --cyan:#1cabe2; --cyan-deep:#0b6e9b; --focus:#0b6e9b;
-  --fs:17px; --radius:10px; --nodata:#e3ebef;
+  --fs:19px; --radius:10px; --nodata:#e3ebef;
   --map-lo:#e4f1f8; --map-hi:#0b5e8a;
   --gold:#ffc20e;
 }
@@ -34,7 +34,7 @@ svg text{font-family:"Public Sans",sans-serif}
 
 /* header */
 header.site{background:var(--card);border-bottom:1px solid var(--line);padding:1rem 1.25rem .85rem}
-.site-inner{max-width:none;margin:0 auto;display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;justify-content:space-between}
+.site-inner{max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;justify-content:space-between}
 .kicker{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan-deep);font-weight:700;margin:0 0 .15rem}
 h1{font-size:1.45rem;font-weight:800;margin:0;line-height:1.15}
 .sub{margin:.25rem 0 0;color:var(--ink-soft);font-size:.92rem;max-width:46rem}
@@ -45,7 +45,7 @@ h1{font-size:1.45rem;font-weight:800;margin:0;line-height:1.15}
 
 /* dimension band */
 nav.band{background:var(--card);border-bottom:1px solid var(--line)}
-.band-inner{max-width:none;margin:0 auto;display:flex;overflow-x:auto}
+.band-inner{max-width:1280px;margin:0 auto;display:flex;overflow-x:auto}
 .dimtab{flex:1 1 0;min-width:8.8rem;border:0;background:transparent;border-top:6px solid var(--dc,var(--cyan));
   padding:.6rem .7rem .7rem;text-align:left;border-right:1px solid var(--line)}
 .dimtab:last-child{border-right:0}
@@ -58,7 +58,7 @@ nav.band{background:var(--card);border-bottom:1px solid var(--line)}
 .dimtab:hover:not([aria-selected="true"]){background:var(--paper)}
 
 /* toolbar */
-.toolbar{max-width:none;margin:.9rem auto .2rem;padding:0 1.25rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:flex-end}
+.toolbar{max-width:1280px;margin:.9rem auto .2rem;padding:0 1.25rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:flex-end}
 .field{display:flex;flex-direction:column;gap:.2rem}
 .field>label,.field>.flabel{font-size:.78rem;font-weight:600;color:var(--ink-soft)}
 .field input[type="search"],.field select{font:inherit;color:var(--ink);background:var(--card);
@@ -67,7 +67,7 @@ nav.band{background:var(--card);border-bottom:1px solid var(--line)}
 .toolbtn{border:1px solid var(--line-strong);background:var(--card);border-radius:8px;
   padding:.5rem .8rem;min-height:2.6rem;font-weight:600;font-size:.9rem}
 .toolbtn:hover{border-color:var(--cyan-deep);color:var(--cyan-deep)}
-.status{max-width:none;margin:.3rem auto 0;padding:0 1.25rem;font-size:.88rem;color:var(--ink-soft)}
+.status{max-width:1280px;margin:.3rem auto 0;padding:0 1.25rem;font-size:.88rem;color:var(--ink-soft)}
 .status strong{font-variant-numeric:tabular-nums}
 
 /* multi-select dropdown */
@@ -99,7 +99,7 @@ details.msel .opts .mclear{width:100%;border:0;background:none;text-align:left;f
 .mvals label{font-weight:400}
 
 /* layout */
-.layout{max-width:none;margin:.8rem auto 0;padding:0 1.25rem 3rem;
+.layout{max-width:1280px;margin:.8rem auto 0;padding:0 1.25rem 3rem;
   display:grid;grid-template-columns:minmax(19rem,26rem) 1fr;gap:1rem;align-items:start}
 .listpane{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
   max-height:calc(100vh - 2rem);overflow-y:auto;position:sticky;top:1rem}
@@ -139,6 +139,9 @@ mark{background:#ffe9a8;color:inherit;border-radius:2px;padding:0 1px}
   border-radius:var(--radius);padding:1rem 1.15rem 1.25rem;position:sticky;top:1rem;
   max-height:calc(100vh - 2rem);overflow-y:auto}
 .vizpane:fullscreen{max-height:none;border-radius:0;padding:1.4rem 2rem 2rem;overflow-y:auto}
+.vizpane.maxi{position:fixed;inset:0;z-index:60;max-height:none;border-radius:0;
+  padding:1.4rem clamp(1rem,4vw,2.5rem) 2rem;overflow-y:auto;box-shadow:0 0 0 100vmax rgba(16,48,63,.25)}
+body.lock{overflow:hidden}
 .viztop{display:flex;justify-content:space-between;gap:.7rem;align-items:flex-start}
 .vizhead .crumb{font-size:.78rem;color:var(--ink-faint);margin:0 0 .15rem;display:flex;align-items:center;gap:.35rem}
 .vizhead .crumb .msym{color:var(--dc)}
@@ -202,7 +205,8 @@ svg .locline:hover{stroke:#3d5a68!important;stroke-width:2.5!important}
 
 /* table */
 .tablewrap{overflow-x:auto}
-table.recs{width:100%;border-collapse:collapse;font-size:.9rem}
+table.recs{width:100%;min-width:100%;border-collapse:collapse;font-size:.9rem}
+.tablewrap{width:100%}
 table.recs th{text-align:left;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;
   color:var(--ink-soft);border-bottom:2px solid var(--line-strong);padding:.35rem .5rem .3rem}
 table.recs td{border-bottom:1px solid var(--line);padding:.45rem .5rem;vertical-align:top}
@@ -222,7 +226,7 @@ table.recs td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-weig
   padding:1.6rem;text-align:center;color:var(--ink-soft)}
 .empty strong{display:block;font-family:"Archivo";font-size:1.05rem;color:var(--ink);margin-bottom:.25rem}
 
-footer.note{max-width:none;margin:0 auto;padding:0 1.25rem 2.5rem;font-size:.82rem;color:var(--ink-faint)}
+footer.note{max-width:1280px;margin:0 auto;padding:0 1.25rem 2.5rem;font-size:.82rem;color:var(--ink-faint)}
 footer.note a{color:var(--cyan-deep)}
 
 @media (max-width:880px){
@@ -249,8 +253,8 @@ footer.note a{color:var(--cyan-deep)}
     </div>
     <div class="textsize" role="group" aria-label="Text size">
       <span aria-hidden="true">Text size</span>
-      <button type="button" data-fs="17" aria-pressed="true" aria-label="Default text size">A</button>
-      <button type="button" data-fs="19" aria-pressed="false" aria-label="Large text size" style="font-size:1.15rem">A</button>
+      <button type="button" data-fs="17" aria-pressed="false" aria-label="Smaller text size">A</button>
+      <button type="button" data-fs="19" aria-pressed="true" aria-label="Default text size" style="font-size:1.15rem">A</button>
       <button type="button" data-fs="21" aria-pressed="false" aria-label="Largest text size" style="font-size:1.3rem">A</button>
     </div>
   </div>
@@ -291,8 +295,8 @@ footer.note a{color:var(--cyan-deep)}
 <div id="tip" role="presentation"></div>
 
 <footer class="note">
-  <p> <a href="https://www.situationofchildren.org" rel="noopener">situationofchildren.org</a>.</p>
-  
+  <p>Data: UNICEF Philippines SitAn database (KoboToolbox exports). Boundaries: PSA/PSGC 2023 via philippines-json-maps. Companion site: <a href="https://www.situationofchildren.org" rel="noopener">situationofchildren.org</a>.</p>
+  <p>To update the data, regenerate with <code>build_sitan_data.py</code>, replace the block between the SITAN_DATA_START and SITAN_DATA_END markers in this file, then run <code>validate_dashboard.py</code> to confirm the dashboard matches the CSVs.</p>
 </footer>
 
 <script>
@@ -537,7 +541,7 @@ function frame(years, lo, hiV, pct, label){
   years.forEach((yr,i)=>{ if(i%everyN) return;
     grid += `<text x="${x(i)}" y="${H-B+18}" font-size="11" fill="#3d5a68" text-anchor="middle">${esc(yr)}</text>`; });
   grid += `<line x1="${L}" x2="${W-R}" y1="${H-B}" y2="${H-B}" stroke="#b9cdd6"/>`;
-  return {W,H,x,y,open:`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${attr(label)}" style="width:100%;max-width:${W}px">${grid}`};
+  return {W,H,x,y,open:`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${attr(label)}" style="width:100%;height:auto;display:block">${grid}`};
 }
 function domain(allVals){
   let lo = Math.min(...allVals), hiV = Math.max(...allVals);
@@ -839,6 +843,7 @@ function renderViz(){
         <button type="button" data-view="table" aria-pressed="${view==="table"}">Table</button>
       </div>${dsel}${ctl}
     </div>${body}`;
+  syncFsIcon();
   viz.querySelectorAll("#dkmsel input[data-cat]").forEach(cb=>{
     const c = cats.find(x=>x.cat===cb.dataset.cat);
     if(!c) return;
@@ -932,8 +937,14 @@ viz.addEventListener("click", e => {
     return;
   }
   if(e.target.closest("#fsbtn")){
-    if(document.fullscreenElement) document.exitFullscreen && document.exitFullscreen();
-    else if(viz.requestFullscreen) viz.requestFullscreen();
+    if(document.fullscreenElement){ document.exitFullscreen && document.exitFullscreen(); }
+    else if(viz.classList.contains("maxi")){ setMaxi(false); }
+    else if(viz.requestFullscreen){
+      // Embedded pages (e.g. SharePoint iframes) often deny the Fullscreen API;
+      // fall back to a fixed overlay that fills the viewport instead.
+      const p = viz.requestFullscreen();
+      if(p && p.catch) p.catch(()=>setMaxi(true));
+    } else setMaxi(true);
     return;
   }
   const cx = e.target.closest("[data-catx]");
@@ -981,9 +992,18 @@ viz.addEventListener("change", e => {
   if(sel.dataset.ctl==="myr") state.myr = sel.value;
   renderViz();
 });
-document.addEventListener("fullscreenchange", () => {
+function setMaxi(on){
+  viz.classList.toggle("maxi", on);
+  document.body.classList.toggle("lock", on);
+  syncFsIcon();
+}
+function syncFsIcon(){
   const b = viz.querySelector("#fsbtn .msym");
-  if(b) b.textContent = document.fullscreenElement ? "fullscreen_exit" : "fullscreen";
+  if(b) b.textContent = (document.fullscreenElement || viz.classList.contains("maxi")) ? "fullscreen_exit" : "fullscreen";
+}
+document.addEventListener("fullscreenchange", syncFsIcon);
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape" && viz.classList.contains("maxi")) setMaxi(false);
 });
 
 /* ---------- tooltip ---------- */
