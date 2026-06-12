@@ -88,6 +88,15 @@ details.msel .opts input{width:1rem;height:1rem;accent-color:var(--cyan-deep)}
 details.msel .opts .mclear{width:100%;border:0;background:none;text-align:left;font-size:.8rem;
   font-weight:600;color:var(--cyan-deep);padding:.35rem .5rem}
 .msel.small>summary{min-height:2.2rem;font-size:.85rem;min-width:10rem;padding:.34rem .55rem}
+.mcat{border-top:1px solid var(--line);margin-top:.15rem;padding-top:.15rem}
+.mcat:first-of-type{border-top:0}
+.mcathead{display:flex;align-items:center;gap:.1rem}
+.mcathead .mcx{border:0;background:none;padding:.15rem;display:inline-flex;color:var(--ink-faint)}
+.mcathead label{flex:1;font-weight:600;padding:.28rem .4rem .28rem .1rem}
+.mcathead .mcname{flex:1}
+.mcathead .ccount{font-size:.72rem;color:var(--ink-faint);font-weight:500;font-variant-numeric:tabular-nums}
+.mvals{padding-left:1.6rem}
+.mvals label{font-weight:400}
 
 /* layout */
 .layout{max-width:1280px;margin:.8rem auto 0;padding:0 1.25rem 3rem;
@@ -404,6 +413,35 @@ const disaggKey = r => {
   const a = r[REC.D1], b = r[REC.D2];
   return a && b ? a+" · "+b : (a || b || "Total");
 };
+/* category = the disaggregation NAME pair, e.g. "Residence", "Age × Sex" */
+const catOf = r => {
+  const parts = [];
+  if(r[REC.D1]) parts.push(r[REC.D1N] || "Other");
+  if(r[REC.D2]) parts.push(r[REC.D2N] || "Other");
+  return parts.join(" × ") || "Total";
+};
+/* ordered catalog for one indicator: [{cat, vals:[valueKey,...]}] */
+function catalog(ind){
+  const m = new Map();
+  ind.r.forEach(r => {
+    const c = catOf(r), v = disaggKey(r);
+    if(!m.has(c)) m.set(c, []);
+    if(!m.get(c).includes(v)) m.get(c).push(v);
+  });
+  return [...m.entries()].map(([cat,vals])=>({cat, vals}));
+}
+/* the category the LATEST/BASELINE chips are built from */
+function defaultCat(ind){
+  const cats = catalog(ind);
+  if(!cats.length) return null;
+  const hp = headlinePool(ind);
+  if(hp.recs.length){
+    const c = catOf(hp.recs[0]);
+    const hit = cats.find(x=>x.cat===c);
+    if(hit) return hit;
+  }
+  return cats.find(x=>x.cat==="Total") || cats[0];
+}
 function disSeries(ind, gi){
   const i = gi >= 0 ? gi : 0;
   const by = new Map();
@@ -647,11 +685,12 @@ function tableView(ind){
   const shown = gis.slice(0,6);
   const recs = state.dkeys.length ? ind.r.filter(r=>state.dkeys.includes(disaggKey(r))) : ind.r;
   return `<div class="tablewrap"><table class="recs">
-    <thead><tr><th scope="col">Year</th><th scope="col">Disaggregation</th>
+    <thead><tr><th scope="col">Year</th><th scope="col">Category</th><th scope="col">Disaggregation</th>
       <th scope="col">Philippines</th>${shown.map(i=>`<th scope="col">${esc(GEOS[i].l)}</th>`).join("")}</tr></thead>
     <tbody>${recs.map(r=>{
       const phi = r[REC.VALS][0];
       return `<tr><td class="num">${esc(r[REC.YEAR]||"")}</td>
+        <td>${esc(catOf(r))}</td>
         <td>${hi(disaggKey(r))}${r[REC.BASE]?'<span class="basetag">Baseline</span>':""}${r[REC.REM]?`<div class="remark">${hi(r[REC.REM])}</div>`:""}</td>
         <td class="num">${phi==null?'<span style="color:var(--ink-faint)">–</span>':fmt(phi)}</td>
         ${shown.map(i=>{
@@ -692,9 +731,6 @@ function findSel(){
     if(ind.key === state.sel) return {dim:d, sub:s, ind};
   return null;
 }
-function dkeyOptions(ind){
-  return [...new Set(ind.r.map(disaggKey))];
-}
 function renderViz(){
   const hitSel = findSel();
   if(!hitSel){
@@ -713,10 +749,17 @@ function renderViz(){
 
   const r0 = ind.r[0];
   const src = [r0[REC.AGY], r0[REC.SRC]].filter(Boolean).join(" · ");
-  const keys = dkeyOptions(ind);
+  const cats = catalog(ind);
+  const keys = [].concat(...cats.map(c=>c.vals));
+  if(state.dkeysInit !== ind.key){
+    state.dkeysInit = ind.key;
+    const dc = defaultCat(ind);
+    state.dkeys = dc ? [...dc.vals] : [];
+    state.dexp = new Set(dc ? [dc.cat] : []);
+  }
   state.dkeys = state.dkeys.filter(k => keys.includes(k));
   const dkey1 = state.dkeys[0] || keys[0];
-  const dNote = state.dkeys.length > 1 ? `The map shows one disaggregation at a time: ${state.dkeys[0]}.` : "";
+  const dNote = state.dkeys.length > 1 ? `The map shows one disaggregation value at a time: ${state.dkeys[0]}.` : "";
 
   let ctl = "", body = "";
   if(view === "trend"){
@@ -747,13 +790,31 @@ function renderViz(){
     body = tableView(ind);
   }
 
-  // unified disaggregation multi-select (applies to every view)
-  const dsel = keys.length > 1 ? `<div class="cardctl"><span class="flabel" id="dklabel">Disaggregations</span>
+  // grouped disaggregation dropdown: categories (Residence, Mother's age...) expand into values
+  const sumTxt = (()=>{
+    if(!state.dkeys.length) return "All";
+    const full = cats.find(c => c.vals.length===state.dkeys.length && c.vals.every(v=>state.dkeys.includes(v)));
+    if(full) return full.cat;
+    return state.dkeys.length===1 ? state.dkeys[0] : state.dkeys.length+" selected";
+  })();
+  const dsel = keys.length > 1 ? `<div class="cardctl"><span class="flabel" id="dklabel">Disaggregation</span>
     <details class="msel small" id="dkmsel" aria-labelledby="dklabel">
-      <summary><span id="dksum">${state.dkeys.length ? (state.dkeys.length===1 ? esc(state.dkeys[0]) : state.dkeys.length+" selected") : "All"}</span><span class="msym">expand_more</span></summary>
+      <summary><span id="dksum">${esc(sumTxt)}</span><span class="msym">expand_more</span></summary>
       <div class="opts">
         <button type="button" class="mclear" data-clear="dk">Clear selection</button>
-        ${keys.map(k=>`<label><input type="checkbox" value="${attr(k)}"${state.dkeys.includes(k)?" checked":""}> ${esc(k)}</label>`).join("")}
+        ${cats.map(c=>{
+          const nSel = c.vals.filter(v=>state.dkeys.includes(v)).length;
+          const exp = state.dexp && state.dexp.has(c.cat);
+          return `<div class="mcat">
+            <div class="mcathead">
+              <button type="button" class="mcx" data-catx="${attr(c.cat)}" aria-expanded="${!!exp}" aria-label="Show values for ${attr(c.cat)}"><span class="msym">${exp?"expand_more":"chevron_right"}</span></button>
+              <label><input type="checkbox" data-cat="${attr(c.cat)}"${nSel===c.vals.length?" checked":""}> <span class="mcname">${esc(c.cat)}</span> <span class="ccount">${nSel?nSel+"/":""}${c.vals.length}</span></label>
+            </div>
+            <div class="mvals"${exp?"":" hidden"}>
+              ${c.vals.map(v=>`<label><input type="checkbox" value="${attr(v)}"${state.dkeys.includes(v)?" checked":""}> ${esc(v)}</label>`).join("")}
+            </div>
+          </div>`;
+        }).join("")}
       </div>
     </details></div>` : "";
 
@@ -778,6 +839,12 @@ function renderViz(){
         <button type="button" data-view="table" aria-pressed="${view==="table"}">Table</button>
       </div>${dsel}${ctl}
     </div>${body}`;
+  viz.querySelectorAll("#dkmsel input[data-cat]").forEach(cb=>{
+    const c = cats.find(x=>x.cat===cb.dataset.cat);
+    if(!c) return;
+    const n = c.vals.filter(v=>state.dkeys.includes(v)).length;
+    cb.indeterminate = n>0 && n<c.vals.length;
+  });
 }
 
 /* ---------- list pane ---------- */
@@ -869,6 +936,17 @@ viz.addEventListener("click", e => {
     else if(viz.requestFullscreen) viz.requestFullscreen();
     return;
   }
+  const cx = e.target.closest("[data-catx]");
+  if(cx){
+    const cat = cx.dataset.catx;
+    if(!state.dexp) state.dexp = new Set();
+    state.dexp.has(cat) ? state.dexp.delete(cat) : state.dexp.add(cat);
+    const mv = cx.closest(".mcat").querySelector(".mvals");
+    mv.hidden = !mv.hidden;
+    cx.setAttribute("aria-expanded", String(!mv.hidden));
+    cx.querySelector(".msym").textContent = mv.hidden ? "chevron_right" : "expand_more";
+    return;
+  }
   if(e.target.closest("[data-clear='dk']")){ state.dkeys = []; renderViz(); return; }
   const reg = e.target.closest("path.reg");
   if(reg){
@@ -880,8 +958,20 @@ viz.addEventListener("click", e => {
   }
 });
 viz.addEventListener("change", e => {
-  if(e.target.closest("#dkmsel")){
-    state.dkeys = [...viz.querySelectorAll("#dkmsel input:checked")].map(i=>i.value);
+  const box = e.target.closest("#dkmsel input");
+  if(box){
+    const hit = findSel();
+    if(box.dataset.cat && hit){
+      const c = catalog(hit.ind).find(x=>x.cat===box.dataset.cat);
+      if(c){
+        const set = new Set(state.dkeys);
+        c.vals.forEach(v => box.checked ? set.add(v) : set.delete(v));
+        state.dkeys = [...set];
+        if(box.checked && state.dexp) state.dexp.add(c.cat);
+      }
+    } else {
+      state.dkeys = [...viz.querySelectorAll("#dkmsel .mvals input:checked")].map(i=>i.value);
+    }
     renderViz();
     const dk = viz.querySelector("#dkmsel"); if(dk) dk.open = true;
     return;
