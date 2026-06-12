@@ -34,7 +34,7 @@ svg text{font-family:"Public Sans",sans-serif}
 
 /* header */
 header.site{background:var(--card);border-bottom:1px solid var(--line);padding:1rem 1.25rem .85rem}
-.site-inner{max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;justify-content:space-between}
+.site-inner{max-width:none;margin:0 auto;display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;justify-content:space-between}
 .kicker{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan-deep);font-weight:700;margin:0 0 .15rem}
 h1{font-size:1.45rem;font-weight:800;margin:0;line-height:1.15}
 .sub{margin:.25rem 0 0;color:var(--ink-soft);font-size:.92rem;max-width:46rem}
@@ -45,7 +45,7 @@ h1{font-size:1.45rem;font-weight:800;margin:0;line-height:1.15}
 
 /* dimension band */
 nav.band{background:var(--card);border-bottom:1px solid var(--line)}
-.band-inner{max-width:1280px;margin:0 auto;display:flex;overflow-x:auto}
+.band-inner{max-width:none;margin:0 auto;display:flex;overflow-x:auto}
 .dimtab{flex:1 1 0;min-width:8.8rem;border:0;background:transparent;border-top:6px solid var(--dc,var(--cyan));
   padding:.6rem .7rem .7rem;text-align:left;border-right:1px solid var(--line)}
 .dimtab:last-child{border-right:0}
@@ -58,7 +58,7 @@ nav.band{background:var(--card);border-bottom:1px solid var(--line)}
 .dimtab:hover:not([aria-selected="true"]){background:var(--paper)}
 
 /* toolbar */
-.toolbar{max-width:1280px;margin:.9rem auto .2rem;padding:0 1.25rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:flex-end}
+.toolbar{max-width:none;margin:.9rem auto .2rem;padding:0 1.25rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:flex-end}
 .field{display:flex;flex-direction:column;gap:.2rem}
 .field>label,.field>.flabel{font-size:.78rem;font-weight:600;color:var(--ink-soft)}
 .field input[type="search"],.field select{font:inherit;color:var(--ink);background:var(--card);
@@ -67,7 +67,7 @@ nav.band{background:var(--card);border-bottom:1px solid var(--line)}
 .toolbtn{border:1px solid var(--line-strong);background:var(--card);border-radius:8px;
   padding:.5rem .8rem;min-height:2.6rem;font-weight:600;font-size:.9rem}
 .toolbtn:hover{border-color:var(--cyan-deep);color:var(--cyan-deep)}
-.status{max-width:1280px;margin:.3rem auto 0;padding:0 1.25rem;font-size:.88rem;color:var(--ink-soft)}
+.status{max-width:none;margin:.3rem auto 0;padding:0 1.25rem;font-size:.88rem;color:var(--ink-soft)}
 .status strong{font-variant-numeric:tabular-nums}
 
 /* multi-select dropdown */
@@ -99,7 +99,7 @@ details.msel .opts .mclear{width:100%;border:0;background:none;text-align:left;f
 .mvals label{font-weight:400}
 
 /* layout */
-.layout{max-width:1280px;margin:.8rem auto 0;padding:0 1.25rem 3rem;
+.layout{max-width:none;margin:.8rem auto 0;padding:0 1.25rem 3rem;
   display:grid;grid-template-columns:minmax(19rem,26rem) 1fr;gap:1rem;align-items:start}
 .listpane{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
   max-height:calc(100vh - 2rem);overflow-y:auto;position:sticky;top:1rem}
@@ -226,7 +226,7 @@ table.recs td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-weig
   padding:1.6rem;text-align:center;color:var(--ink-soft)}
 .empty strong{display:block;font-family:"Archivo";font-size:1.05rem;color:var(--ink);margin-bottom:.25rem}
 
-footer.note{max-width:1280px;margin:0 auto;padding:0 1.25rem 2.5rem;font-size:.82rem;color:var(--ink-faint)}
+footer.note{max-width:none;margin:0 auto;padding:0 1.25rem 2.5rem;font-size:.82rem;color:var(--ink-faint)}
 footer.note a{color:var(--cyan-deep)}
 
 @media (max-width:880px){
